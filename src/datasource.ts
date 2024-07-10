@@ -1,5 +1,6 @@
 import {DataSource} from 'typeorm';
 import 'dotenv/config'
+import { User } from './entities/User';
 
 export const AppDataSource = new DataSource({
     type: "mssql",
@@ -8,9 +9,12 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    entities:[User],
     options: {
         encrypt: true,
         trustServerCertificate: true,
-    }
+    },
+    synchronize: true,
+    logging: true,
 })
 
