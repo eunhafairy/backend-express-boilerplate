@@ -1,20 +1,19 @@
-import {DataSource} from 'typeorm';
-import 'dotenv/config'
-import { User } from './entities/User';
+import { DataSource } from "typeorm";
+import "dotenv/config";
+import { User } from "./entities/User";
 
 export const AppDataSource = new DataSource({
-    type: "mssql",
-    host: process.env.DB_HOST,
-    port: 1433,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    entities:[User],
-    options: {
-        encrypt: true,
-        trustServerCertificate: true,
-    },
-    synchronize: true,
-    logging: true,
-})
-
+  type: "mssql",
+  host: process.env.DB_HOST,
+  port: 1433,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: [User],
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+  },
+  synchronize: true,
+  logging: true,
+});
