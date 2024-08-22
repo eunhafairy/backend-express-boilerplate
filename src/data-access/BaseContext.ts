@@ -20,8 +20,18 @@ export default class Context<E extends ObjectLiteral> {
         return await repository.find();
     }
 
+    public async findBy(where: FindOptionsWhere<E>): Promise<E[]> {
+        const repository = this.getRepository();
+        return await repository.findBy(where);
+    }
+
     public async findOneBy(where: FindOptionsWhere<E>): Promise<E | null> {
         const repository = this.getRepository();
         return await repository.findOneBy(where);
+    }
+
+    public async remove(e: E): Promise<E> {
+        const repository = this.getRepository();
+        return await repository.remove(e);
     }
 }

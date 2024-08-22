@@ -11,8 +11,8 @@ route.get("/", async (req, res) => {
     try {
         //validate jwt
         const token = req.header("Authorization") as string;
-        const loggedInUser = validateToken(token, res);
-        console.log("Logged in user: ", loggedInUser?.email);
+        const loggedInUser = validateToken(token);
+        console.log("Logged in user: ", loggedInUser);
 
         const userManager = new UserManager();
 
@@ -42,11 +42,36 @@ route.get("/", async (req, res) => {
     }
 });
 
+route.delete("/", async (req, res) => {
+    try {
+        //validate jwt
+        const token = req.header("Authorization") as string;
+        const loggedInUser = validateToken(token);
+        console.log("Logged in user: ", loggedInUser);
+
+        const userManager = new UserManager();
+        const result = await userManager.deleteUser(req.body.userId);
+        return res.send({
+            status: 200,
+            message: `Successfully deleted user ${req.body.userId}`,
+            data: result,
+        });
+    } catch (exception: any) {
+        console.error("Something went wrong!", JSON.stringify(exception));
+        const status = exception?.status || 500;
+        const message = exception?.message || "Something went wrong";
+        res.send({
+            status,
+            message,
+        });
+    }
+});
+
 route.post("/login", async (req, res) => {
     try {
         const loginDetails: LoginModel = req.body;
         const userManager = new UserManager();
-        const result = await userManager.login(loginDetails, res);
+        const result = await userManager.login(loginDetails);
         res.send(result);
     } catch (exception: any) {
         console.error("Something went wrong!", JSON.stringify(exception));

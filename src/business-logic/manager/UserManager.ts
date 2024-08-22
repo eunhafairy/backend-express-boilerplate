@@ -33,7 +33,7 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         return this.entityToModelMapper(result);
     }
 
-    public async createUser(payload: CreateUserModel): Promise<User> {
+    public async createUser(payload: CreateUserModel): Promise<UserGridModel> {
         const user = new User();
         user.firstName = payload.firstName;
         user.lastName = payload.lastName;
@@ -45,7 +45,8 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         var hashedPassword = bcrypt.hashSync(payload.password, salt);
         user.password = hashedPassword;
 
-        return await this.context.insert(user);
+        const createdUser = await this.context.insert(user);
+        return this.entityToModelMapper(createdUser);
     }
 
     public async getUsers(): Promise<UserGridModel[]> {
@@ -96,5 +97,13 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
             message: "Login successful!",
             token,
         };
+    }
+
+    public async deleteUser(id: string): Promise<UserGridModel> {
+        if (!id) throw new HttpError("userId is required!", 400);
+        const user = await this.context.findOneBy({ id: id });
+        if (!user) throw new HttpError(`User not found! Id: ${id}`, 404);
+        const deletedUser = await this.context.remove(user);
+        return this.entityToModelMapper(deletedUser);
     }
 }
