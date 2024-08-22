@@ -7,9 +7,34 @@ import {
 } from "../business-logic/data-models/user";
 const route = express.Router();
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+const { sign, verify } = jwt;
 
 route.get("/", async (req, res) => {
     try {
+        //validate jwt
+        const token = req.header("Authorization") as string;
+        if (!token) {
+            return res.send({
+                status: 400,
+                message: `Invalid or missing token`,
+            });
+        }
+        const secret = process.env.SECRET_KEY as string;
+        if (!secret) {
+            return res.send({
+                status: 500,
+                message: `Secret key for creating jwt token not found!`,
+            });
+        }
+        const isValid = verify(token, secret);
+        if (!isValid) {
+            return res.send({
+                status: 400,
+                message: `Invalid or missing token`,
+            });
+        }
+
         const userRespository = AppDataSource.getRepository(User);
         const result = await userRespository.find();
         res.send(result);
@@ -51,8 +76,29 @@ route.post("/login", async (req, res) => {
             loginDetails.password,
             result.password
         );
+
         if (isValid) {
-            return res.sendStatus(200);
+            const secret = process.env.SECRET_KEY as string;
+            if (!secret) {
+                return res.send({
+                    status: 500,
+                    message: `Secret key for creating jwt token not found!`,
+                });
+            }
+            const token = sign(
+                {
+                    username: result.username,
+                    email: result?.email,
+                },
+                secret,
+                { expiresIn: 3000 }
+            );
+
+            return res.send({
+                status: 200,
+                message: "Login successful!",
+                token,
+            });
         }
         res.send({
             status: 401,
