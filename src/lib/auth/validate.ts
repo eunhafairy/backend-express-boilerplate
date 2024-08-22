@@ -1,26 +1,13 @@
 import { verify } from "jsonwebtoken";
+import HttpError from "../error/error";
 
 export const validateToken = (token: string | undefined | null, res: any) => {
-    
-    if (!token) {
-        return res.send({
-            status: 400,
-            message: `Invalid or missing token`,
-        });
-    }
+    if (!token) throw new HttpError(`Invalid or missing token`, 400);
+
     const secret = process.env.SECRET_KEY as string;
-    if (!secret) {
-        return res.send({
-            status: 500,
-            message: `Secret key for creating jwt token not found!`,
-        });
-    }
+    if (!secret)  throw new HttpError(`Secret key for creating jwt token not found!`, 500);
+
     const user = verify(token, secret);
-    if (!user) {
-        return res.send({
-            status: 400,
-            message: `Invalid or missing token`,
-        });
-    }
+    if (!user) throw new HttpError(`Invalid or missing token`, 400);
     return user;
 };
