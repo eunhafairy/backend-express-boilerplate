@@ -1,4 +1,4 @@
-import { EntityManager, EntitySchema, EntityTarget, getRepository, ObjectLiteral, Repository } from "typeorm";
+import { EntityTarget, ObjectLiteral } from "typeorm";
 import { AppDataSource } from "../datasource";
 
 export default class Context<E extends ObjectLiteral> {
@@ -16,6 +16,11 @@ export default class Context<E extends ObjectLiteral> {
     public async insert(e: E) : Promise<E> {
         const repository = this.getRepository()
         return await repository.save(e)
+    }
+
+    public async find(): Promise<E[]> {
+        const repository = this.getRepository()
+        return await repository.find()
     }
 
 
