@@ -4,11 +4,13 @@ import {
     CreateUserModel,
     LoginModel,
     UserGridModel,
-} from "../data-models/user";
+} from "../data-models/User";
 import bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import HttpError from "../../lib/error/error";
 import BaseManager from "./BaseManager";
+import RoleManager from "./RoleManager";
+import { RoleEnum } from "../../entities/Role";
 
 export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
     public entityToModelMapper(entity: User): UserGridModel {
@@ -41,6 +43,27 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         user.username = payload.username;
         user.isActive = payload.isActive;
         user.number = payload.number;
+
+        //assign default role
+        let role;
+        const roleManager = new RoleManager();
+        if (payload.roleId) {
+            role = await roleManager.getRoleById(payload.roleId);
+            if (!role)
+                throw new HttpError(
+                    `Role for id ${payload.roleId} not found!`,
+                    400
+                );
+        } else {
+            //user role
+            role = await roleManager.getRoleById(RoleEnum.USER);
+            if (!role)
+                throw new HttpError(
+                    `Role for id ${payload.roleId} not found!`,
+                    400
+                );
+        }
+        user.role = role;
         var salt = bcrypt.genSaltSync(10);
         var hashedPassword = bcrypt.hashSync(payload.password, salt);
         user.password = hashedPassword;

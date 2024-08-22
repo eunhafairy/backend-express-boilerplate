@@ -7,7 +7,7 @@ export default abstract class BaseManager<
     S
 > {
     protected context: C;
-    public abstract entityToModelMapper(entities: E): S;
+    public abstract entityToModelMapper(entity: E): S;
 
     constructor() {}
 }

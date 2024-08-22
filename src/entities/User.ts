@@ -1,4 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    JoinColumn,
+    ManyToOne,
+} from "typeorm";
+import { Role } from "./Role";
+
+export enum UserRole {
+    ADMIN = "admin",
+    MODERATOR = "moderator",
+    MEMBER = "member",
+}
 
 @Entity()
 export class User {
@@ -25,4 +38,8 @@ export class User {
 
     @Column({ unique: true, type: "varchar", length: 200 })
     username: string;
+
+    @ManyToOne(() => Role)
+    @JoinColumn()
+    role: Role;
 }

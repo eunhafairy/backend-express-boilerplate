@@ -6,6 +6,7 @@ export interface CreateUserModel {
     username: string;
     isActive: boolean;
     number: string;
+    roleId?: number;
 }
 
 export interface LoginModel {
