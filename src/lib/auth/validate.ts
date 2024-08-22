@@ -1,7 +1,7 @@
 import { verify } from "jsonwebtoken";
 import HttpError from "../error/error";
 
-export const validateToken = (token: string | undefined | null, res: any) => {
+export const validateToken = (token: string | undefined | null) => {
     if (!token) throw new HttpError(`Invalid or missing token`, 400);
 
     const secret = process.env.SECRET_KEY as string;

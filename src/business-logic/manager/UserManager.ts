@@ -53,7 +53,7 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         return result.map((r) => this.entityToModelMapper(r));
     }
 
-    public async login(loginDetails: LoginModel, res: any) {
+    public async login(loginDetails: LoginModel) {
         if (!loginDetails.email || !loginDetails.password)
             throw new HttpError("Email and password is required.", 400);
 
