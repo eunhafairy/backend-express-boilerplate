@@ -11,14 +11,14 @@ route.get("/", async (req, res) => {
     try {
         //validate jwt
         const token = req.header("Authorization") as string;
-        const loggedInUser = validateToken(token, res)
-        console.log("Logged in user: ", loggedInUser?.email)
+        const loggedInUser = validateToken(token, res);
+        console.log("Logged in user: ", loggedInUser?.email);
 
         const userManager = new UserManager();
         const result = await userManager.getUsers();
         res.send({
-            status:200,
-            data: result
+            status: 200,
+            data: result,
         });
     } catch (exception: any) {
         console.error("Something went wrong!", JSON.stringify(exception));
@@ -35,9 +35,8 @@ route.post("/login", async (req, res) => {
     try {
         const loginDetails: LoginModel = req.body;
         const userManager = new UserManager();
-        const result = await userManager.login(loginDetails, res)
-        res.send(result)
-
+        const result = await userManager.login(loginDetails, res);
+        res.send(result);
     } catch (exception: any) {
         console.error("Something went wrong!", JSON.stringify(exception));
         const status = exception?.status || 500;
@@ -51,10 +50,9 @@ route.post("/login", async (req, res) => {
 
 route.post("/add", async (req, res) => {
     try {
-    
         const payload: CreateUserModel = req.body;
-        const userManager = new UserManager()
-        await userManager.createUser(payload)
+        const userManager = new UserManager();
+        await userManager.createUser(payload);
 
         res.send({
             message: "User successfully created!",

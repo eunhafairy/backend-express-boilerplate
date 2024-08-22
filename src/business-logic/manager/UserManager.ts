@@ -31,23 +31,34 @@ export class UserManager {
     }
 
     public async login(loginDetails: LoginModel, res: any) {
-        if (!loginDetails.email || !loginDetails.password)  throw new HttpError("Email and password is required.", 400)
-        
+        if (!loginDetails.email || !loginDetails.password)
+            throw new HttpError("Email and password is required.", 400);
+
         const result = await this.context.findByEmail(loginDetails.email);
-        if (!result) throw new HttpError( `User not found for the email address ${loginDetails.email}`, 404)
-        
+        if (!result)
+            throw new HttpError(
+                `User not found for the email address ${loginDetails.email}`,
+                404
+            );
 
         const isValid = bcrypt.compareSync(
             loginDetails.password,
             result.password
         );
 
-        if (!isValid) throw new HttpError( `Wrong password for ${loginDetails.email}`, 401)
-        
+        if (!isValid)
+            throw new HttpError(
+                `Wrong password for ${loginDetails.email}`,
+                401
+            );
 
         const secret = process.env.SECRET_KEY as string;
-        if (!secret) throw new HttpError(`Secret key for creating jwt token not found!`, 500)
-        
+        if (!secret)
+            throw new HttpError(
+                `Secret key for creating jwt token not found!`,
+                500
+            );
+
         const token = sign(
             {
                 username: result.username,
