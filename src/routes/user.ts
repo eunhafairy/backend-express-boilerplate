@@ -1,24 +1,27 @@
 import express from "express";
 import {
     CreateUserModel,
+    LoggedInUserModel,
     LoginModel,
-} from "../business-logic/data-models/user";
+} from "../business-logic/data-models/User";
 const route = express.Router();
 import { validateToken } from "../lib/auth/validate";
 import { UserManager } from "../business-logic/manager/UserManager";
+import { RoleEnum } from "../entities/Role";
+import HttpError from "../lib/error/error";
 
 route.get("/", async (req, res) => {
     try {
         //validate jwt
         const token = req.header("Authorization") as string;
-        const loggedInUser = validateToken(token);
+        const loggedInUser: LoggedInUserModel = validateToken(token) ;
         console.log("Logged in user: ", loggedInUser);
 
         const userManager = new UserManager();
 
         if (req.query.userId) {
             const userId = req.query.userId as string;
-            const user = await userManager.findById(userId);
+            const user = await userManager.findById(userId, loggedInUser);
 
             return res.send({
                 status: 200,
@@ -26,11 +29,13 @@ route.get("/", async (req, res) => {
             });
         }
 
+        if(loggedInUser.roleId !== RoleEnum.ADMIN) throw new HttpError("User is not authorized", 403)
         const result = await userManager.getUsers();
         return res.send({
             status: 200,
             data: result,
         });
+        
     } catch (exception: any) {
         console.error("Something went wrong!", JSON.stringify(exception));
         const status = exception?.status || 500;

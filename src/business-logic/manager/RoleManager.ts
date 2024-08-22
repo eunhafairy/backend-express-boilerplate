@@ -24,13 +24,13 @@ export default class RoleManager extends BaseManager<
         const adminRole = new Role();
         adminRole.roleName = "Admin";
         adminRole.description = "With great power comes great responsibility";
-        adminRole.id = RoleEnum.ADMIN;
+        adminRole.roleId = RoleEnum.ADMIN;
         await this.context.insert(adminRole);
 
         const userRole = new Role();
         userRole.roleName = "User";
         userRole.description = "Just happy to be here";
-        userRole.id = RoleEnum.USER;
+        userRole.roleId = RoleEnum.USER;
         await this.context.insert(userRole);
     }
 
@@ -40,6 +40,6 @@ export default class RoleManager extends BaseManager<
     }
 
     public async getRoleById(id: number): Promise<Role | null> {
-        return await this.context.findOneBy({ id });
+        return await this.context.findOneBy({ roleId: id });
     }
 }

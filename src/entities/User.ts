@@ -39,7 +39,7 @@ export class User {
     @Column({ unique: true, type: "varchar", length: 200 })
     username: string;
 
-    @ManyToOne(() => Role)
-    @JoinColumn()
+    @ManyToOne(() => Role, {nullable: false, eager: true})
+    @JoinColumn({name: "roleId"})
     role: Role;
 }

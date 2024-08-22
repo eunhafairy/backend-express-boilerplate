@@ -21,3 +21,12 @@ export interface UserGridModel {
     username: string;
     number: string;
 }
+
+export interface LoggedInUserModel {
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    roleId?: number;
+    id: string; 
+}

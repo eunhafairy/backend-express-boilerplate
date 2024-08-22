@@ -7,8 +7,8 @@ export enum RoleEnum {
 
 @Entity()
 export class Role {
-    @PrimaryGeneratedColumn("increment", { type: "tinyint" })
-    id: number;
+    @PrimaryGeneratedColumn("increment", { type: "tinyint", name: "roleId" })
+    roleId: number;
 
     @Column("varchar", { length: 200 })
     roleName: string;

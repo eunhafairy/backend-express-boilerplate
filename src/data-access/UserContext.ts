@@ -9,7 +9,7 @@ export default class UserContext extends Context<User> {
     public async findByEmail(email: string): Promise<User | null> {
         const userRepo = this.getRepository();
         return await userRepo.findOneBy({
-            email,
+            email
         });
     }
 }

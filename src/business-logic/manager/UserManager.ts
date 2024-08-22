@@ -2,6 +2,7 @@ import UserContext from "../../data-access/UserContext";
 import { User } from "../../entities/User";
 import {
     CreateUserModel,
+    LoggedInUserModel,
     LoginModel,
     UserGridModel,
 } from "../data-models/User";
@@ -28,11 +29,13 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         this.context = new UserContext();
     }
 
-    public async findById(userId: string) {
-        const result = await this.context.findOneBy({ id: userId });
-        if (!result)
-            throw new HttpError(`User with the id ${userId} not found!`, 404);
-        return this.entityToModelMapper(result);
+    public async findById(userId: string, loggedInUser: LoggedInUserModel) {
+        if ( loggedInUser.roleId === RoleEnum.ADMIN || (loggedInUser.roleId === RoleEnum.USER && loggedInUser.id === userId)) {
+            const result = await this.context.findOneBy({ id: userId });
+            if (!result)  throw new HttpError(`User with the id ${userId} not found!`, 404);
+            return this.entityToModelMapper(result);
+        }
+        throw new HttpError("User is not authorized to view this page.", 403)
     }
 
     public async createUser(payload: CreateUserModel): Promise<UserGridModel> {
@@ -108,8 +111,10 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
 
         const token = sign(
             {
+                id: result.id,
                 username: result.username,
                 email: result?.email,
+                roleId: result.role?.roleId
             },
             secret,
             { expiresIn: 3000 }
