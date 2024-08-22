@@ -1,14 +1,36 @@
 import UserContext from "../../data-access/UserContext";
 import { User } from "../../entities/User";
-import { CreateUserModel, LoginModel } from "../data-models/user";
+import {
+    CreateUserModel,
+    LoginModel,
+    UserGridModel,
+} from "../data-models/user";
 import bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import HttpError from "../../lib/error/error";
+import BaseManager from "./BaseManager";
 
-export class UserManager {
-    private context: any;
+export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
+    public entityToModelMapper(entity: User): UserGridModel {
+        return {
+            firstName: entity.firstName,
+            lastName: entity.lastName,
+            email: entity.email,
+            username: entity.username,
+            number: entity.number,
+        };
+    }
+
     constructor() {
+        super();
         this.context = new UserContext();
+    }
+
+    public async findById(userId: string) {
+        const result = await this.context.findOneBy({ id: userId });
+        if (!result)
+            throw new HttpError(`User with the id ${userId} not found!`, 404);
+        return this.entityToModelMapper(result);
     }
 
     public async createUser(payload: CreateUserModel): Promise<User> {
@@ -26,8 +48,9 @@ export class UserManager {
         return await this.context.insert(user);
     }
 
-    public async getUsers(): Promise<User[]> {
-        return await this.context.find();
+    public async getUsers(): Promise<UserGridModel[]> {
+        const result = await this.context.find();
+        return result.map((r) => this.entityToModelMapper(r));
     }
 
     public async login(loginDetails: LoginModel, res: any) {

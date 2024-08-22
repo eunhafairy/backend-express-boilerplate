@@ -15,8 +15,19 @@ route.get("/", async (req, res) => {
         console.log("Logged in user: ", loggedInUser?.email);
 
         const userManager = new UserManager();
+
+        if (req.query.userId) {
+            const userId = req.query.userId as string;
+            const user = await userManager.findById(userId);
+
+            return res.send({
+                status: 200,
+                data: user,
+            });
+        }
+
         const result = await userManager.getUsers();
-        res.send({
+        return res.send({
             status: 200,
             data: result,
         });

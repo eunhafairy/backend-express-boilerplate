@@ -12,3 +12,11 @@ export interface LoginModel {
     email: string;
     password: string;
 }
+
+export interface UserGridModel {
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    number: string;
+}
