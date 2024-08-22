@@ -14,6 +14,9 @@ import RoleManager from "./RoleManager";
 import { RoleEnum } from "../../entities/Role";
 
 export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
+
+    private currentUser: LoggedInUserModel;
+
     public entityToModelMapper(entity: User): UserGridModel {
         return {
             firstName: entity.firstName,
@@ -24,13 +27,14 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
         };
     }
 
-    constructor() {
+    constructor(user?: LoggedInUserModel) {
         super();
         this.context = new UserContext();
+        if(user) this.currentUser = user
     }
 
-    public async findById(userId: string, loggedInUser: LoggedInUserModel) {
-        if ( loggedInUser.roleId === RoleEnum.ADMIN || (loggedInUser.roleId === RoleEnum.USER && loggedInUser.id === userId)) {
+    public async findById(userId: string) {
+        if ( this.currentUser.roleId === RoleEnum.ADMIN || (this.currentUser.roleId === RoleEnum.USER && this.currentUser.id === userId)) {
             const result = await this.context.findOneBy({ id: userId });
             if (!result)  throw new HttpError(`User with the id ${userId} not found!`, 404);
             return this.entityToModelMapper(result);
@@ -76,6 +80,7 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
     }
 
     public async getUsers(): Promise<UserGridModel[]> {
+        if(this.currentUser.roleId !== RoleEnum.ADMIN) throw new HttpError("User is not authorized", 403)
         const result = await this.context.find();
         return result.map((r) => this.entityToModelMapper(r));
     }
@@ -128,6 +133,7 @@ export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
     }
 
     public async deleteUser(id: string): Promise<UserGridModel> {
+        if(this.currentUser.roleId !== RoleEnum.ADMIN) throw new HttpError("User is not authorized", 403)
         if (!id) throw new HttpError("userId is required!", 400);
         const user = await this.context.findOneBy({ id: id });
         if (!user) throw new HttpError(`User not found! Id: ${id}`, 404);

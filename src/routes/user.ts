@@ -17,11 +17,11 @@ route.get("/", async (req, res) => {
         const loggedInUser: LoggedInUserModel = validateToken(token) ;
         console.log("Logged in user: ", loggedInUser);
 
-        const userManager = new UserManager();
+        const userManager = new UserManager(loggedInUser);
 
         if (req.query.userId) {
             const userId = req.query.userId as string;
-            const user = await userManager.findById(userId, loggedInUser);
+            const user = await userManager.findById(userId);
 
             return res.send({
                 status: 200,
@@ -29,7 +29,7 @@ route.get("/", async (req, res) => {
             });
         }
 
-        if(loggedInUser.roleId !== RoleEnum.ADMIN) throw new HttpError("User is not authorized", 403)
+      
         const result = await userManager.getUsers();
         return res.send({
             status: 200,
@@ -54,7 +54,7 @@ route.delete("/", async (req, res) => {
         const loggedInUser = validateToken(token);
         console.log("Logged in user: ", loggedInUser);
 
-        const userManager = new UserManager();
+        const userManager = new UserManager(loggedInUser);
         const result = await userManager.deleteUser(req.body.userId);
         return res.send({
             status: 200,
