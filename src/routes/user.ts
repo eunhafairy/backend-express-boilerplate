@@ -8,33 +8,16 @@ import {
 const route = express.Router();
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-const { sign, verify } = jwt;
+import { validateToken } from "../lib/auth/validate";
+import { UserManager } from "../business-logic/manager/UserManager";
+const { sign } = jwt;
 
 route.get("/", async (req, res) => {
     try {
         //validate jwt
         const token = req.header("Authorization") as string;
-        if (!token) {
-            return res.send({
-                status: 400,
-                message: `Invalid or missing token`,
-            });
-        }
-        const secret = process.env.SECRET_KEY as string;
-        if (!secret) {
-            return res.send({
-                status: 500,
-                message: `Secret key for creating jwt token not found!`,
-            });
-        }
-        const isValid = verify(token, secret);
-        if (!isValid) {
-            return res.send({
-                status: 400,
-                message: `Invalid or missing token`,
-            });
-        }
-
+        const loggedInUser = validateToken(token, res)
+        console.log("Logged in user: ", loggedInUser?.email)
         const userRespository = AppDataSource.getRepository(User);
         const result = await userRespository.find();
         res.send(result);
@@ -117,23 +100,10 @@ route.post("/login", async (req, res) => {
 
 route.post("/add", async (req, res) => {
     try {
-        //Get User information from request body
+    
         const payload: CreateUserModel = req.body;
-        const user = new User();
-        user.firstName = payload.firstName;
-        user.lastName = payload.lastName;
-        user.email = payload.email;
-        user.username = payload.username;
-        user.isActive = payload.isActive;
-        user.number = payload.number;
-
-        //hash the password
-        var salt = bcrypt.genSaltSync(10);
-        var hashedPassword = bcrypt.hashSync(payload.password, salt);
-        user.password = hashedPassword;
-
-        const userRespository = AppDataSource.getRepository(User);
-        await userRespository.save(user);
+        const userManager = new UserManager()
+        await userManager.createUser(payload)
 
         res.send({
             message: "User successfully created!",
