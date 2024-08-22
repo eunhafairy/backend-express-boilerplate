@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import "dotenv/config";
-import { User } from "./entities/User";
-import { Role } from "./entities/Role";
+import { User } from "./data-access/entities/User";
+import { Role } from "./data-access/entities/Role";
 
 export const AppDataSource = new DataSource({
     type: "mssql",

@@ -1,5 +1,5 @@
 import { EntityTarget, FindOptionsWhere, ObjectLiteral } from "typeorm";
-import { AppDataSource } from "../datasource";
+import { AppDataSource } from "../../datasource";
 
 export default class Context<E extends ObjectLiteral> {
     protected entity!: EntityTarget<E>;

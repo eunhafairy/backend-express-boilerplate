@@ -1,5 +1,5 @@
-import UserContext from "../../data-access/UserContext";
-import { User } from "../../entities/User";
+import UserContext from "../../data-access/context/UserContext";
+import { User } from "../../data-access/entities/User";
 import {
     CreateUserModel,
     LoggedInUserModel,
@@ -11,7 +11,7 @@ import { sign } from "jsonwebtoken";
 import HttpError from "../../lib/error/error";
 import BaseManager from "./BaseManager";
 import RoleManager from "./RoleManager";
-import { RoleEnum } from "../../entities/Role";
+import { RoleEnum } from "../../data-access/entities/Role";
 
 export class UserManager extends BaseManager<UserContext, User, UserGridModel> {
 

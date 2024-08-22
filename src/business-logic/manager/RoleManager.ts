@@ -1,5 +1,5 @@
-import RoleContext from "../../data-access/RoleContext";
-import { Role, RoleEnum } from "../../entities/Role";
+import RoleContext from "../../data-access/context/RoleContext";
+import { Role, RoleEnum } from "../../data-access/entities/Role";
 import { RoleModel } from "../data-models/Role";
 import BaseManager from "./BaseManager";
 

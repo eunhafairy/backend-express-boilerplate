@@ -1,5 +1,5 @@
 import { ObjectLiteral } from "typeorm";
-import Context from "../../data-access/BaseContext";
+import Context from "../../data-access/context/BaseContext";
 
 export default abstract class BaseManager<
     C extends Context<E>,

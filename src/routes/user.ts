@@ -7,7 +7,7 @@ import {
 const route = express.Router();
 import { validateToken } from "../lib/auth/validate";
 import { UserManager } from "../business-logic/manager/UserManager";
-import { RoleEnum } from "../entities/Role";
+import { RoleEnum } from "../data-access/entities/Role";
 import HttpError from "../lib/error/error";
 
 route.get("/", async (req, res) => {
